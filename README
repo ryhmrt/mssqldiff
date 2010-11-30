@@ -1,0 +1,23 @@
+mssqldiff
+
+Copyright (c) 2010 Ryohei Morita
+
+Introduction
+  This is a tool that aims to merge two different schemas on mssql.
+
+Building
+  > mvn package
+  mssqldiff-xxx.jar package would be created in target directory.
+  * Note: requires Maven2, Java1.6 or above
+
+Usage
+  > java mssqldiff-xxx.jar
+  * Note: requires some libraries in lib dir at runtime.
+
+Lisence
+  This software is licensing using The MIT License.
+  Please read "LICENSE" file for detail.
+
+Contact
+  Tweet on me. My account is @ryhmrt.
+
