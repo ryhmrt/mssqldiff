@@ -15,7 +15,7 @@ public class SqlUtil {
     }
 
     public static String addColumn(Column column) {
-        return addColumn(column.getTableName(), column.getName(), column.getTableName(), column.getLength(), column.isPk(), column.isIdentity(), column.isNullable(), column.getDefaultValue());
+        return addColumn(column.getTableName(), column.getName(), column.getType(), column.getLength(), column.isPk(), column.isIdentity(), column.isNullable(), column.getDefaultValue());
     }
 
     public static String addColumn(String table, String column, String type, int length, boolean pk, boolean identity, boolean nullable, String defaultValue) {
