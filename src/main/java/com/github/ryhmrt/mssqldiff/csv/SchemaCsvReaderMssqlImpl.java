@@ -19,7 +19,7 @@ public class SchemaCsvReaderMssqlImpl implements SchemaCsvReader {
         "  o.xtype AS objectType," + "\n" + "\n" +
         "  o.name AS tableName," + "\n" +
         "  c.name AS columnName," + "\n" +
-        "  t.type AS columnType," + "\n" +
+        "  t.name AS columnType," + "\n" +
         "  CASE" + "\n" +
         "    WHEN c.length = -1 THEN c.length" + "\n" +
         "    WHEN t.name = 'nvarchar' THEN c.length / 2" + "\n" +
