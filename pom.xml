@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.github.ryhmrt</groupId>
+  <artifactId>mssqldiff</artifactId>
+  <version>0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>mssqldiff</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>com.github.ryhmrt.mssqldiff.Main</mainClass>
+              <packageName>com.github.ryhmrt.mssqldiff</packageName>
+              <addClasspath>true</addClasspath>
+              <addExtensions>true</addExtensions>
+              <classpathPrefix>lib</classpathPrefix>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>dependency-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <outputDirectory>${project.build.directory}/lib</outputDirectory>
+        </configuration>
+      </plugin> 
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <!-- 本当はruntimeスコープで良いのだが、copy-dependenciesでうまく拾えないのでcompileにしている -->
+    	<groupId>net.sourceforge.jtds</groupId>
+    	<artifactId>jtds</artifactId>
+    	<version>1.2.4</version>
+    </dependency>
+    <dependency>
+    	<groupId>junit</groupId>
+    	<artifactId>junit</artifactId>
+    	<version>4.8.2</version>
+    	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>net.sf.opencsv</groupId>
+    	<artifactId>opencsv</artifactId>
+    	<version>2.1</version>
+    </dependency>
+  </dependencies>
+</project>
