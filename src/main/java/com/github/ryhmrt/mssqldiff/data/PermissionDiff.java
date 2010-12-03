@@ -49,6 +49,6 @@ public class PermissionDiff extends Diff<Permission> {
     }
 
     private String grant(String option) {
-        return SqlUtil.revoke(getTo().getTableName(), getTo().getUserName(), option);
+        return SqlUtil.grant(getTo().getTableName(), getTo().getUserName(), option);
     }
 }
