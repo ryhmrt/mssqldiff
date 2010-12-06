@@ -12,7 +12,7 @@ public class PermissionDiffer extends AbstractDiffer<Permission, PermissionDiff>
                 from.isCanInsert() != to.isCanInsert() ||
                 from.isCanUpdate() != to.isCanUpdate() ||
                 from.isCanDelete() != to.isCanDelete()) {
-            return setDiffData(createDiff(), Type.MODIFIED, from, to);
+            return createDiff(Type.MODIFIED, from, to);
         }
         return null;
     }

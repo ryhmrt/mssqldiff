@@ -5,15 +5,20 @@ import com.github.ryhmrt.mssqldiff.data.Diff;
 public abstract class AbstractDiffer<DATA, DIFF extends Diff<DATA>> {
     public DIFF diff(DATA from, DATA to) {
         if (from == null) {
-            return setDiffData(createDiff(), Diff.Type.CREATED, from, to);
+            return createDiff(Diff.Type.CREATED, from, to);
         }
         if (to == null) {
-            return setDiffData(createDiff(), Diff.Type.DROPPED, from, to);
+            return createDiff(Diff.Type.DROPPED, from, to);
         }
         return detailDiff(from, to);
     }
 
-    protected DIFF setDiffData(DIFF diff, Diff.Type type, DATA from, DATA to) {
+    protected boolean isDifferent(Object a, Object b) {
+        return (a != b) && (a == null ^ b == null) && (!a.equals(b));
+    }
+
+    protected DIFF createDiff(Diff.Type type, DATA from, DATA to) {
+        DIFF diff = createDiff();
         diff.setType(type);
         diff.setFrom(from);
         diff.setTo(to);

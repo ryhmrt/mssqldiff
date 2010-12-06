@@ -1,5 +1,7 @@
 package com.github.ryhmrt.mssqldiff.differ;
 
+import java.util.List;
+
 import com.github.ryhmrt.mssqldiff.data.Column;
 import com.github.ryhmrt.mssqldiff.data.ColumnDiff;
 import com.github.ryhmrt.mssqldiff.data.Diff;
@@ -17,10 +19,12 @@ public class TableDiffer extends AbstractDiffer<Table, TableDiff> {
     
     @Override
     protected TableDiff detailDiff(Table from, Table to) {
-        TableDiff diff = createDiff();
-        diff.setColumnDiffs(columnListDiffer.diff(columnDiffer, from.getColumns(), to.getColumns()));
-        diff.setPermissionDiffs(permissionListDiffer.diff(permissionDiffer, from.getPermissions(), to.getPermissions()));
-        return setDiffData(diff, diff.getColumnDiffs().isEmpty() && diff.getPermissionDiffs().isEmpty() ? Diff.Type.EQUAL : Diff.Type.MODIFIED, from, to);
+        List<ColumnDiff> columnDiffs = columnListDiffer.diff(columnDiffer, from.getColumns(), to.getColumns());
+        List<PermissionDiff> permissionDiffs = permissionListDiffer.diff(permissionDiffer, from.getPermissions(), to.getPermissions());
+        TableDiff diff = createDiff(columnDiffs.isEmpty() && permissionDiffs.isEmpty() ? Diff.Type.EQUAL : Diff.Type.MODIFIED, from, to);
+        diff.setColumnDiffs(columnDiffs);
+        diff.setPermissionDiffs(permissionDiffs);
+        return diff;
     }
 
     @Override
