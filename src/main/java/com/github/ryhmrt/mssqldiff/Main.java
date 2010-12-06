@@ -5,12 +5,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,6 +28,8 @@ import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -36,6 +41,7 @@ import com.github.ryhmrt.mssqldiff.convertor.TableListConvertor;
 import com.github.ryhmrt.mssqldiff.csv.SchemaCsv;
 import com.github.ryhmrt.mssqldiff.csv.SchemaCsvReaderFileImpl;
 import com.github.ryhmrt.mssqldiff.data.Diff;
+import com.github.ryhmrt.mssqldiff.data.Diff.Type;
 import com.github.ryhmrt.mssqldiff.data.Table;
 import com.github.ryhmrt.mssqldiff.data.TableDiff;
 import com.github.ryhmrt.mssqldiff.differ.ListDiffer;
@@ -66,6 +72,11 @@ public class Main {
     private JLabel toLabel = null;
     private JScrollPane summaryTreeScrollPane = null;
     private JScrollPane detailScrollPane = null;
+    private JPanel diffExecutePanel = null;
+    private JCheckBox ignorePermissionCheck = null;
+
+    private List<TableDiff> tableDiffs = Collections.emptyList();  //  @jve:decl-index=0:
+
     /**
      * This method initializes jFrame
      * 
@@ -295,8 +306,8 @@ public class Main {
             summaryPanel = new JPanel();
             summaryPanel.setLayout(new BorderLayout());
             summaryPanel.setMinimumSize(new Dimension(150, 100));
-            summaryPanel.add(getDiffButton(), BorderLayout.NORTH);
             summaryPanel.add(getSummaryTreeScrollPane(), BorderLayout.CENTER);
+            summaryPanel.add(getDiffExecutePanel(), BorderLayout.NORTH);
         }
         return summaryPanel;
     }
@@ -339,7 +350,9 @@ public class Main {
 
     private String getSql(Object current) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)current;
-        if (node.getUserObject() instanceof Diff) {
+        if (node.getUserObject() instanceof TableDiff) {
+            return ((TableDiff)node.getUserObject()).toSqlWithoutPermissions();
+        } else if (node.getUserObject() instanceof Diff) {
             return ((Diff<?>)node.getUserObject()).toSql();
         } else {
             StringBuilder sb = new StringBuilder();
@@ -383,23 +396,41 @@ public class Main {
             List<Table> fromTables = loadTables(fromCsvFileSelector.getFilePath());
             List<Table> toTables = loadTables(toCsvFileSelector.getFilePath());
             ListDiffer<Table, TableDiff, TableDiffer> differ = new ListDiffer<Table, TableDiff, TableDiffer>();
-            List<TableDiff> diff = differ.diff(new TableDiffer(), fromTables, toTables);
-            DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("diff", true);
-            for (TableDiff tableDiff : diff) {
-                DefaultMutableTreeNode tableNode = new DefaultMutableTreeNode(tableDiff, true);
-                if (!tableDiff.getColumnDiffs().isEmpty()) {
-                    tableNode.add(createChildNodes("columns", tableDiff.getColumnDiffs()));
-                }
-                if (!tableDiff.getPermissionDiffs().isEmpty()) {
-                    tableNode.add(createChildNodes("permissions", tableDiff.getPermissionDiffs()));
-                }
-                rootNode.add(tableNode);
-            }
-            TreeModel treeModel = new DefaultTreeModel(rootNode);
-            summaryTree.setModel(treeModel);
+            tableDiffs = differ.diff(new TableDiffer(), fromTables, toTables);
+            showDiffTree();
         } catch (RuntimeException ex) {
             JOptionPane.showMessageDialog(jFrame, ex.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void showDiffTree() {
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("diff", true);
+        for (TableDiff tableDiff : tableDiffs) {
+            DefaultMutableTreeNode tableNode = new DefaultMutableTreeNode(tableDiff, true);
+            if (!tableDiff.getColumnDiffs().isEmpty()) {
+                if (ignorePermissionCheck.isSelected()) {
+                    // 権限無視の場合は、テーブルの下に直接カラムを追加
+                    for (Object data : tableDiff.getColumnDiffs()) {
+                        tableNode.add(new DefaultMutableTreeNode(data, false));
+                    }
+                } else {
+                    tableNode.add(createChildNodes("columns", tableDiff.getColumnDiffs()));
+                }
+            }
+            if (ignorePermissionCheck.isSelected()) {
+                // 権限無視の場合、権限のみの変更であればテーブルごとスキップ
+                if (tableDiff.getType() == Type.MODIFIED && tableDiff.getColumnDiffs().isEmpty()) {
+                    continue;
+                }
+            } else {
+                if (!tableDiff.getPermissionDiffs().isEmpty()) {
+                    tableNode.add(createChildNodes("permissions", tableDiff.getPermissionDiffs()));
+                }
+            }
+            rootNode.add(tableNode);
+        }
+        TreeModel treeModel = new DefaultTreeModel(rootNode);
+        summaryTree.setModel(treeModel);
     }
 
     private MutableTreeNode createChildNodes(String title, List<?> childDataList) {
@@ -440,6 +471,43 @@ public class Main {
             detailScrollPane.setViewportView(getDetailPane());
         }
         return detailScrollPane;
+    }
+
+    /**
+     * This method initializes diffExecutePanel	
+     * 	
+     * @return javax.swing.JPanel	
+     */
+    private JPanel getDiffExecutePanel() {
+        if (diffExecutePanel == null) {
+            GridLayout gridLayout = new GridLayout();
+            gridLayout.setRows(2);
+            gridLayout.setColumns(1);
+            diffExecutePanel = new JPanel();
+            diffExecutePanel.setLayout(gridLayout);
+            diffExecutePanel.add(getDiffButton(), null);
+            diffExecutePanel.add(getIgnorePermissionCheck(), null);
+        }
+        return diffExecutePanel;
+    }
+
+    /**
+     * This method initializes ignorePermissionCheck	
+     * 	
+     * @return javax.swing.JCheckBox	
+     */
+    private JCheckBox getIgnorePermissionCheck() {
+        if (ignorePermissionCheck == null) {
+            ignorePermissionCheck = new JCheckBox();
+            ignorePermissionCheck.setText("Ignore permissions");
+            ignorePermissionCheck.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    showDiffTree();
+                }
+            });
+        }
+        return ignorePermissionCheck;
     }
 
     /**

@@ -33,6 +33,10 @@ public class TableDiff extends Diff<Table> {
 
     @Override
     public String toCreateSql() {
+        return toCreateSql(true);
+    }
+
+    protected String toCreateSql(boolean withPermission) {
         Table table = getTo();
         StringBuilder sb = new StringBuilder();
         if (table.getType().equals("U")) {
@@ -46,6 +50,11 @@ public class TableDiff extends Diff<Table> {
             sb.append(getName());
             sb.append("]");
             sb.append("\n");
+        }
+        if (withPermission) {
+            for (PermissionDiff p : getPermissionDiffs()) {
+                sb.append(p.toSql());
+            }
         }
         return sb.toString();
     }
@@ -78,6 +87,10 @@ public class TableDiff extends Diff<Table> {
 
     @Override
     public String toModifySql() {
+        return toModifySql(true);
+    }
+
+    protected String toModifySql(boolean withPermission) {
         Table table = getFrom();
         StringBuilder sb = new StringBuilder();
         if (table.getType().equals("U")) {
@@ -94,10 +107,25 @@ public class TableDiff extends Diff<Table> {
             sb.append("]");
             sb.append("\n");
         }
-        for (PermissionDiff p : getPermissionDiffs()) {
-            sb.append(p.toSql());
+        if (withPermission) {
+            for (PermissionDiff p : getPermissionDiffs()) {
+                sb.append(p.toSql());
+            }
         }
         return sb.toString();
     }
+
+    public String toSqlWithoutPermissions() {
+        switch (getType()) {
+        case CREATED:
+            return toCreateSql(false);
+        case DROPPED:
+            return toDropSql();
+        case MODIFIED:
+            return toModifySql(false);
+        }
+        return null;
+    }
+
 
 }
