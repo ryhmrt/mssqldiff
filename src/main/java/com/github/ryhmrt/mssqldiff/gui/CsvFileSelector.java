@@ -50,7 +50,7 @@ public class CsvFileSelector extends JPanel {
     private JButton getCsvSelectButton() {
         if (csvSelectButton == null) {
             csvSelectButton = new JButton();
-            csvSelectButton.setText("Select");
+            csvSelectButton.setText("File");
             csvSelectButton.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     FileDialog fileDialog = new FileDialog(parentFrame, "Select CSV file", FileDialog.LOAD);
@@ -72,7 +72,7 @@ public class CsvFileSelector extends JPanel {
     private JButton getCsvCreateButton() {
         if (csvCreateButton == null) {
             csvCreateButton = new JButton();
-            csvCreateButton.setText("Create");
+            csvCreateButton.setText("BD");
             csvCreateButton.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     CsvCreateDialog dialog = new CsvCreateDialog(parentFrame);
