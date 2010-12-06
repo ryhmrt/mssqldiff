@@ -44,7 +44,7 @@ public class SqlUtil {
         if (type.equalsIgnoreCase("nvarchar")) sizable = true;
         if (type.equalsIgnoreCase("binary")) sizable = true;
         if (type.equalsIgnoreCase("varbinary")) sizable = true;
-        return type + (sizable ? "(" + (length == -1 ? "MAX" : Integer.toString(length)) + ") " : "");
+        return type + (sizable ? "(" + (length == -1 ? "MAX" : Integer.toString(length)) + ")" : "");
     }
 
     public static String dropColumn(String table, String column) {
