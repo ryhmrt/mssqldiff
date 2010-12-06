@@ -6,6 +6,14 @@ import com.github.ryhmrt.mssqldiff.data.Table;
 
 public class SqlUtil {
 
+    public static final String WARNING =
+        "/*\n" +
+        " * Warning:\n" +
+        " * The generated DDL is not been tested yet.\n" +
+        " * Please be aware it is only for reference.\n" +
+        " * I recommend you not to use it directly.\n" +
+        " */\n\n";
+
     public static String revoke(String table, String user, String option) {
         return "REVOKE " + option + " ON [" + table + "] FROM " + user + ";\nGO\n";
     }

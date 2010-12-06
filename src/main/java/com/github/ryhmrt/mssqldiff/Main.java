@@ -47,6 +47,7 @@ import com.github.ryhmrt.mssqldiff.data.TableDiff;
 import com.github.ryhmrt.mssqldiff.differ.ListDiffer;
 import com.github.ryhmrt.mssqldiff.differ.TableDiffer;
 import com.github.ryhmrt.mssqldiff.gui.CsvFileSelector;
+import com.github.ryhmrt.mssqldiff.util.SqlUtil;
 
 public class Main {
 
@@ -341,7 +342,7 @@ public class Main {
             summaryTree.addTreeSelectionListener(new TreeSelectionListener() {
                 @Override
                 public void valueChanged(TreeSelectionEvent e) {
-                    detailPane.setText(getSql(e.getPath().getLastPathComponent()));
+                    detailPane.setText(SqlUtil.WARNING + getSql(e.getPath().getLastPathComponent()));
                 }
             });
         }
