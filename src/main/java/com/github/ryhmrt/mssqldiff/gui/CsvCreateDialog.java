@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import com.github.ryhmrt.mssqldiff.csv.SchemaCsv;
@@ -32,7 +33,7 @@ public class CsvCreateDialog extends JDialog {
     private JLabel userLabel = null;
     private JTextField userField = null;
     private JLabel passLabel = null;
-    private JTextField passField = null;
+    private JPasswordField passField = null;
     private JLabel dbnameLabel = null;
     private JTextField dbnameField = null;
     private JPanel buttonPanel = null;
@@ -219,11 +220,11 @@ public class CsvCreateDialog extends JDialog {
     /**
      * This method initializes passField	
      * 	
-     * @return javax.swing.JTextField	
+     * @return javax.swing.JPasswordField
      */
-    private JTextField getPassField() {
+    private JPasswordField getPassField() {
         if (passField == null) {
-            passField = new JTextField();
+            passField = new JPasswordField();
         }
         return passField;
     }
@@ -303,7 +304,7 @@ public class CsvCreateDialog extends JDialog {
                     SchemaCsvReaderMssqlImpl reader = new SchemaCsvReaderMssqlImpl();
                     reader.setHost(hostField.getText());
                     reader.setUser(userField.getText());
-                    reader.setPass(passField.getText());
+                    reader.setPass(new String(passField.getPassword()));
                     reader.setDbname(dbnameField.getText());
                     try {
                         List<SchemaCsv> data = reader.read();
