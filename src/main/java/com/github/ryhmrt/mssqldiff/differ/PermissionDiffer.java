@@ -14,7 +14,7 @@ public class PermissionDiffer extends AbstractDiffer<Permission, PermissionDiff>
                 from.isCanDelete() != to.isCanDelete()) {
             return createDiff(Type.MODIFIED, from, to);
         }
-        return null;
+        return createDiff(Type.EQUAL, from, to);
     }
 
     @Override

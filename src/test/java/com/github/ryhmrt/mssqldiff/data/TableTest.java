@@ -21,8 +21,11 @@ public class TableTest {
         table2.setName("myTableName");
         Table table3 = new Table();
         table3.setName("someTableName");
+        Table table4 = new Table();
+        table4.setName("MYTABLENAME");
         
         assertTrue(table1.equals(table2));
         assertFalse(table1.equals(table3));
+        assertTrue(table1.equals(table4));
     }
 }

@@ -31,9 +31,13 @@ public class PermissionTest {
         Permission permission4 = new Permission();
         permission4.setTableName("myTableName");
         permission4.setUserName("someUserName");
+        Permission permission5 = new Permission();
+        permission5.setTableName("MYTABLENAME");
+        permission5.setUserName("MYUSERNAME");
         
         assertTrue(permission1.equals(permission2));
         assertFalse(permission1.equals(permission3));
         assertFalse(permission1.equals(permission4));
+        assertTrue(permission1.equals(permission5));
     }
 }

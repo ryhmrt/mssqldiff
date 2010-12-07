@@ -76,7 +76,7 @@ public class Column {
     public boolean equals(Object o) {
         if (o instanceof Column) {
             Column c = (Column)o;
-            return tableName.equals(c.tableName) && name.equals(c.name);
+            return tableName.equalsIgnoreCase(c.tableName) && name.equalsIgnoreCase(c.name);
         }
         return false;
     }

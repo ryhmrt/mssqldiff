@@ -50,7 +50,7 @@ public class Table {
     public boolean equals(Object o) {
         if (o instanceof Table) {
             Table t = (Table)o;
-            return name.equals(t.name);
+            return name.equalsIgnoreCase(t.name);
         }
         return false;
     }

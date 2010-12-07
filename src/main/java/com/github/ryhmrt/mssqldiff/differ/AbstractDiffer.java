@@ -14,7 +14,7 @@ public abstract class AbstractDiffer<DATA, DIFF extends Diff<DATA>> {
     }
 
     protected boolean isDifferent(Object a, Object b) {
-        return (a != b) && (a == null ^ b == null) && (!a.equals(b));
+        return (a == null) ? (b != null) : (!a.equals(b));
     }
 
     protected DIFF createDiff(Diff.Type type, DATA from, DATA to) {

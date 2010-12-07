@@ -31,9 +31,13 @@ public class ColumnTest {
         Column column4 = new Column();
         column4.setTableName("myTableName");
         column4.setName("someColumnName");
+        Column column5 = new Column();
+        column5.setTableName("MYTABLENAME");
+        column5.setName("MYCOLUMNNAME");
         
         assertTrue(column1.equals(column2));
         assertFalse(column1.equals(column3));
         assertFalse(column1.equals(column4));
+        assertTrue(column1.equals(column5));
     }
 }

@@ -55,7 +55,7 @@ public class Permission {
     public boolean equals(Object o) {
         if (o instanceof Permission) {
             Permission c = (Permission)o;
-            return tableName.equals(c.tableName) && userName.equals(c.userName);
+            return tableName.equalsIgnoreCase(c.tableName) && userName.equalsIgnoreCase(c.userName);
         }
         return false;
     }
