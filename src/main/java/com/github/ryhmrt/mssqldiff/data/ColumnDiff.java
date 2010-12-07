@@ -12,17 +12,17 @@ public class ColumnDiff extends Diff<Column> {
 
     @Override
     public String toCreateSql() {
-        return SqlUtil.addColumn(getTo());
+        return "-- missing column [" + getTo().getName() + "]\n" + SqlUtil.addColumn(getTo());
     }
 
     @Override
     public String toDropSql() {
         Column column = getFrom();
-        return SqlUtil.dropColumn(column.getTableName(), column.getName());
+        return "-- unnecessary column: " + SqlUtil.columnDefine(getFrom()) + "\n" + SqlUtil.dropColumn(column.getTableName(), column.getName());
     }
 
     @Override
     public String toModifySql() {
-        return "-- different column " + getName() + "\n";
+        return "-- modified column from: " + SqlUtil.columnDefine(getFrom()) + "\n" + "-- to: " + SqlUtil.columnDefine(getTo()) + "\n";
     }
 }

@@ -64,7 +64,7 @@ public class TableDiff extends Diff<Table> {
         Table table = getFrom();
         StringBuilder sb = new StringBuilder();
         if (table.getType().equals("U")) {
-            sb.append("-- surplus table [");
+            sb.append("-- unnecessary table [");
             sb.append(getName());
             sb.append("]");
             sb.append("\n");
@@ -73,7 +73,7 @@ public class TableDiff extends Diff<Table> {
             sb.append("]");
             sb.append("\n");
         } else if (table.getType().equals("V")) {
-            sb.append("-- surplus view [");
+            sb.append("-- unnecessary view [");
             sb.append(getName());
             sb.append("]");
             sb.append("\n");

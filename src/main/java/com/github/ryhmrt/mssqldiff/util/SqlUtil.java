@@ -59,17 +59,24 @@ public class SqlUtil {
         sb.append("] (");
         sb.append("\n");
         for (Column column : table.getColumns()) {
-            sb.append("  [");
-            sb.append(column.getName());
-            sb.append("] ");
-            sb.append(columnType(column.getType(), column.getLength()));
-            if (column.isPk()) sb.append(" PRIMARY KEY");
-            if (column.isIdentity()) sb.append(" IDENTITY");
-            if (!column.isNullable()) sb.append(" NOT NULL");
-            if (column.getDefaultValue() != null && !column.getDefaultValue().isEmpty()) sb.append(" DEFAULT " + column.getDefaultValue());
+            sb.append("  ");
+            sb.append(columnDefine(column));
             sb.append(",\n");
         }
         sb.append(");\nGO\n");
+        return sb.toString();
+    }
+
+    public static String columnDefine(Column column) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        sb.append(column.getName());
+        sb.append("] ");
+        sb.append(columnType(column.getType(), column.getLength()));
+        if (column.isPk()) sb.append(" PRIMARY KEY");
+        if (column.isIdentity()) sb.append(" IDENTITY");
+        if (!column.isNullable()) sb.append(" NOT NULL");
+        if (column.getDefaultValue() != null && !column.getDefaultValue().isEmpty()) sb.append(" DEFAULT " + column.getDefaultValue());
         return sb.toString();
     }
 }
