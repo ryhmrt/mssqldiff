@@ -5,9 +5,13 @@ import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,6 +22,8 @@ import javax.swing.JTextField;
 import com.github.ryhmrt.mssqldiff.csv.SchemaCsv;
 import com.github.ryhmrt.mssqldiff.csv.SchemaCsvReaderMssqlImpl;
 import com.github.ryhmrt.mssqldiff.csv.SchemaCsvWriter;
+import com.github.ryhmrt.mssqldiff.gui.config.DbConnection;
+import com.github.ryhmrt.mssqldiff.gui.config.DbConnectionStore;
 
 public class CsvCreateDialog extends JDialog {
 
@@ -41,12 +47,18 @@ public class CsvCreateDialog extends JDialog {
     private JButton loadButton = null;
 
     private String filePath = null;
+    private JComboBox presetComboBox = null;
+    private JLabel presetLabel = null;
 
+    DbConnectionStore dbConnectionStore = new DbConnectionStore();  //  @jve:decl-index=0:
+    List<DbConnection> dbConnections;
+    
     /**
      * @param owner
      */
     public CsvCreateDialog(Frame owner) {
         super(owner);
+        dbConnections = dbConnectionStore.load();
         initialize();
     }
 
@@ -69,7 +81,7 @@ public class CsvCreateDialog extends JDialog {
     private JPanel getJContentPane() {
         if (jContentPane == null) {
             BorderLayout borderLayout = new BorderLayout();
-            borderLayout.setHgap(8);
+            borderLayout.setHgap(2);
             borderLayout.setVgap(8);
             jContentPane = new JPanel();
             jContentPane.setLayout(borderLayout);
@@ -103,7 +115,7 @@ public class CsvCreateDialog extends JDialog {
     private JButton getFileButton() {
         if (fileButton == null) {
             fileButton = new JButton();
-            fileButton.setText("File");
+            fileButton.setText("Select");
             fileButton.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     FileDialog fileDialog = new FileDialog(CsvCreateDialog.this, "Select CSV file", FileDialog.SAVE);
@@ -124,50 +136,60 @@ public class CsvCreateDialog extends JDialog {
      */
     private JPanel getInputPanel() {
         if (inputPanel == null) {
+            GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
+            gridBagConstraints32.gridx = 0;
+            gridBagConstraints32.gridy = 0;
+            presetLabel = new JLabel();
+            presetLabel.setText("preset:");
+            GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
+            gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
+            gridBagConstraints21.gridy = 0;
+            gridBagConstraints21.weightx = 1.0;
+            gridBagConstraints21.gridx = 1;
             GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
             gridBagConstraints31.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraints31.gridx = 1;
-            gridBagConstraints31.gridy = 5;
+            gridBagConstraints31.gridy = 6;
             GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
             gridBagConstraints9.fill = GridBagConstraints.HORIZONTAL;
-            gridBagConstraints9.gridy = 0;
+            gridBagConstraints9.gridy = 1;
             gridBagConstraints9.gridx = 1;
             GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-            gridBagConstraints8.gridy = 0;
+            gridBagConstraints8.gridy = 1;
             gridBagConstraints8.gridx = 0;
             GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
             gridBagConstraints7.fill = GridBagConstraints.HORIZONTAL;
-            gridBagConstraints7.gridy = 4;
+            gridBagConstraints7.gridy = 3;
             gridBagConstraints7.weightx = 1.0;
             gridBagConstraints7.gridx = 1;
             GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
             gridBagConstraints6.gridx = 0;
-            gridBagConstraints6.gridy = 4;
+            gridBagConstraints6.gridy = 3;
             GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
             gridBagConstraints5.fill = GridBagConstraints.HORIZONTAL;
-            gridBagConstraints5.gridy = 3;
+            gridBagConstraints5.gridy = 5;
             gridBagConstraints5.weightx = 1.0;
             gridBagConstraints5.gridx = 1;
             GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
             gridBagConstraints4.gridx = 0;
-            gridBagConstraints4.gridy = 3;
+            gridBagConstraints4.gridy = 5;
             GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
             gridBagConstraints3.fill = GridBagConstraints.HORIZONTAL;
-            gridBagConstraints3.gridy = 2;
+            gridBagConstraints3.gridy = 4;
             gridBagConstraints3.weightx = 1.0;
             gridBagConstraints3.gridx = 1;
             GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
             gridBagConstraints2.gridx = 0;
-            gridBagConstraints2.gridy = 2;
+            gridBagConstraints2.gridy = 4;
             GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
             gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
-            gridBagConstraints1.gridy = 1;
+            gridBagConstraints1.gridy = 2;
             gridBagConstraints1.weightx = 1.0;
             gridBagConstraints1.gridx = 1;
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridwidth = 1;
-            gridBagConstraints.gridy = 1;
+            gridBagConstraints.gridy = 2;
             fileLabel = new JLabel();
             fileLabel.setText("file:");
             passLabel = new JLabel();
@@ -189,6 +211,8 @@ public class CsvCreateDialog extends JDialog {
             inputPanel.add(fileLabel, gridBagConstraints8);
             inputPanel.add(getFilePanel(), gridBagConstraints9);
             inputPanel.add(getButtonPanel(), gridBagConstraints31);
+            inputPanel.add(getPresetComboBox(), gridBagConstraints21);
+            inputPanel.add(presetLabel, gridBagConstraints32);
         }
         return inputPanel;
     }
@@ -302,17 +326,27 @@ public class CsvCreateDialog extends JDialog {
             loadButton.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     SchemaCsvReaderMssqlImpl reader = new SchemaCsvReaderMssqlImpl();
-                    reader.setHost(hostField.getText());
-                    reader.setUser(userField.getText());
-                    reader.setPass(new String(passField.getPassword()));
-                    reader.setDbname(dbnameField.getText());
+                    String host = hostField.getText();
+                    String dbname = dbnameField.getText();
+                    String user = userField.getText();
+                    String pass = new String(passField.getPassword());
+                    reader.setHost(host);
+                    reader.setUser(user);
+                    reader.setPass(pass);
+                    reader.setDbname(dbname);
                     try {
                         List<SchemaCsv> data = reader.read();
                         SchemaCsvWriter writer = new SchemaCsvWriter(filePathLabel.getText());
                         writer.write(data);
                         filePath = filePathLabel.getText();
+                        DbConnection dc = new DbConnection(host, dbname, user);
+                        dbConnections.remove(dc);
+                        dbConnections.add(dc);
+                        Collections.sort(dbConnections);
+                        dbConnectionStore.save(dbConnections);
                         setVisible(false);
                     } catch (RuntimeException ex) {
+                        ex.printStackTrace();
                         JOptionPane.showMessageDialog(CsvCreateDialog.this, ex.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
                     }
                 }
@@ -323,5 +357,40 @@ public class CsvCreateDialog extends JDialog {
 
     public String getFilePath() {
         return filePath;
+    }
+
+    /**
+     * This method initializes presetComboBox	
+     * 	
+     * @return javax.swing.JComboBox	
+     */
+    private JComboBox getPresetComboBox() {
+        if (presetComboBox == null) {
+            presetComboBox = new JComboBox();
+            presetComboBox.addItem("");
+            for (DbConnection dc : dbConnections) {
+                presetComboBox.addItem(dc);
+            }
+            presetComboBox.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    String host = "";
+                    String dbname = "";
+                    String user = "";
+                    String pass = "";
+                    if (e.getItem() instanceof DbConnection) {
+                        DbConnection dc = (DbConnection)e.getItem();
+                        host = dc.getHost();
+                        dbname = dc.getDbname();
+                        user = dc.getUser();
+                    }
+                    hostField.setText(host);
+                    dbnameField.setText(dbname);
+                    userField.setText(user);
+                    passField.setText(pass);
+                }
+            });
+        }
+        return presetComboBox;
     }
 }  //  @jve:decl-index=0:visual-constraint="10,10"
